@@ -3,8 +3,8 @@ package es.us.lsi.dad;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 
@@ -13,44 +13,42 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ServletLogin extends HttpServlet {
-	/**
-	 * 
-	 */
+public class ServletTemperatura extends HttpServlet{
 	private static final long serialVersionUID = -6201150158950823811L;
 
-	private Map<String, String> userPass;
-
+	private List<SensorTemperatura> th;
+	
 	public void init() throws ServletException {
-		userPass = new HashMap<String, String>();
-		userPass.put("luismi", "1234");
+		th = new ArrayList<SensorTemperatura>();
+		
 		super.init();
 	}
-
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String user = req.getParameter("user");
-		String pass = req.getParameter("password");
-		if (userPass.containsKey(user) && userPass.get(user).equals(pass)) {
-			response(resp, "login ok");
-		} else {
-			response(resp, "invalid login");
+		String idth = req.getParameter("idth");
+		if(th.contains(idth)){
+			response(resp, "Aqui esta su temperatura" + idth);
+		}else {
+			response(resp, "No existe esa temperatura");
 		}
+		
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	    BufferedReader reader = req.getReader();
-	    
 	    Gson gson = new Gson();
-		User user = gson.fromJson(reader, User.class);
-		if (!user.getPassword().equals("") && !user.getUser().equals("")) {
-			userPass.put(user.getUser(), user.getPassword());
-			resp.getWriter().println(gson.toJson(user));
+		SensorTemperatura stempt = gson.fromJson(reader, SensorTemperatura.class);
+	    
+		if (!stempt.equals("")) {
+			th.add(stempt);
+			resp.getWriter().println(gson.toJson(stempt));
 			resp.setStatus(201);
+			response(resp, "Añadido con éxito");
 		}else{
 			resp.setStatus(300);
-			response(resp, "Wrong user and password");
+			response(resp, "Please select an id");
 		}
 	   
 	}
@@ -60,20 +58,22 @@ public class ServletLogin extends HttpServlet {
 	    BufferedReader reader = req.getReader();
 	    
 	    Gson gson = new Gson();
-		User user = gson.fromJson(reader, User.class);
-		if (!user.getPassword().equals("") && !user.getUser().equals("") 
-				&& userPass.containsKey(user.getUser()) 
-				&& userPass.get(user.getUser()).equals(user.getPassword())) {
-			userPass.remove(user.getUser());
-			resp.getWriter().println(gson.toJson(user));
+		
+		SensorTemperatura stempt = gson.fromJson(reader, SensorTemperatura.class);
+		
+		if (!stempt.getIdth().equals("") && th.contains(stempt.getIdth())) {
+			th.remove(stempt.getIdth());
+			resp.getWriter().println(gson.toJson(stempt));
 			resp.setStatus(201);
 		}else{
 			resp.setStatus(300);
-			response(resp, "Wrong user and password");
+			response(resp, "No existe esa temperatura");
 		}
 	   
 	}
-
+	
+	
+	
 	private void response(HttpServletResponse resp, String msg) throws IOException {
 		PrintWriter out = resp.getWriter();
 		out.println("<html>");
@@ -82,4 +82,7 @@ public class ServletLogin extends HttpServlet {
 		out.println("</body>");
 		out.println("</html>");
 	}
+	
+	
+	
 }
