@@ -56,7 +56,6 @@ public class RestServer extends AbstractVerticle {
 		router.get("/api/luces").handler(this::getAllWithParamsL);
 		router.get("/api/luces/luz/alll").handler(this::getAllL);
 		router.get("/api/luces/:idluz").handler(this::getOneL);
-		router.post("/api/luces").handler(this::addOneL);
 		router.delete("/api/luces/:idluz").handler(this::deleteOneL);
 		router.put("/api/luces/:idluz").handler(this::putOneL);
 	}
