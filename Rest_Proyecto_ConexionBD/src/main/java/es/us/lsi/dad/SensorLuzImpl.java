@@ -2,17 +2,26 @@ package es.us.lsi.dad;
 
 import java.util.Objects;
 
-public class SensorLuzEntity {
-	private Integer idl;
-	private Double nivel_luz;
-	private Long timestampl;
+public class SensorLuzImpl {
+	protected Integer idl;
+	protected Double nivel_luz;
+	protected Long timestampl;
+	protected Integer idP; // id de la placa
+	protected Integer idG;	//id del group
 	
-	public SensorLuzEntity(Integer idl, Double nivel_luz, Long timestampl) {
+	public SensorLuzImpl(Integer idl, Double nivel_luz, Long timestampl, Integer idP, Integer idG) {
 		super();
 		this.idl = idl;
 		this.nivel_luz = nivel_luz;
 		this.timestampl = timestampl;
+		this.idP = idP;
+		this.idG = idG;
+		
 	}
+	public SensorLuzImpl() {
+		super();
+	}
+	
 	
 	@Override
 	public int hashCode() {
@@ -26,7 +35,7 @@ public class SensorLuzEntity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SensorLuzEntity other = (SensorLuzEntity) obj;
+		SensorLuzImpl other = (SensorLuzImpl) obj;
 		return Objects.equals(idl, other.idl);
 	}
 	public Integer getIdl() {
@@ -47,5 +56,16 @@ public class SensorLuzEntity {
 	public void setTimestampl(Long timestampl) {
 		this.timestampl = timestampl;
 	}
-	
+	public Integer getIdP() {
+		return idP;
+	}
+	public void setIdP(Integer idP) {
+		this.idP = idP;
+	}
+	public Integer getIdG() {
+		return idG;
+	}
+	public void setIdG(Integer idG) {
+		this.idG = idG;
+	}
 }
