@@ -6,13 +6,22 @@ public class SensorLuzEntity {
 	private Integer idl;
 	private Double nivel_luz;
 	private Long timestampl;
+	private Integer idP; 
+	private Integer idG;
 	
-	public SensorLuzEntity(Integer idl, Double nivel_luz, Long timestampl) {
+	public SensorLuzEntity(Integer idl, Double nivel_luz, Long timestampl, Integer idP, Integer idG) {
 		super();
 		this.idl = idl;
 		this.nivel_luz = nivel_luz;
 		this.timestampl = timestampl;
+		this.idP = idP;
+		this.idG = idG;
+		
 	}
+	public SensorLuzEntity() {
+		super();
+	}
+	
 	
 	@Override
 	public int hashCode() {
@@ -46,6 +55,18 @@ public class SensorLuzEntity {
 	}
 	public void setTimestampl(Long timestampl) {
 		this.timestampl = timestampl;
+	}
+	public Integer getIdP() {
+		return idP;
+	}
+	public void setIdP(Integer idP) {
+		this.idP = idP;
+	}
+	public Integer getIdG() {
+		return idG;
+	}
+	public void setIdG(Integer idG) {
+		this.idG = idG;
 	}
 	
 }

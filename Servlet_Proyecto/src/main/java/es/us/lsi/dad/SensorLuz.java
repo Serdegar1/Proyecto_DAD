@@ -6,29 +6,30 @@ public class SensorLuz {
 
 	private Integer idLuz;
 	private Integer valorluz;
-	private Long timestamp;
+	private Long timestampl;
 	//()
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(idLuz);
+	}
 	public Integer getIdLuz() {
 		return idLuz;
 	}
 	public void setIdLuz(Integer idLuz) {
-		idLuz = idLuz;
+		this.idLuz = idLuz;
 	}
 	public Integer getValorluz() {
 		return valorluz;
 	}
 	public void setValorluz(Integer valorluz) {
-		valorluz = valorluz;
+		this.valorluz = valorluz;
 	}
-	public Long getTimestampp() {
-		return timestamp;
+	public Long getTimestampl() {
+		return timestampl;
 	}
-	public void setTimestampp(Long timestampp) {
-		this.timestamp = timestampp;
-	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(idLuz);
+	public void setTimestampl(Long timestampl) {
+		this.timestampl = timestampl;
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -42,11 +43,11 @@ public class SensorLuz {
 		return Objects.equals(idLuz, other.idLuz);
 	}
 	
-	public SensorLuz(Integer idLuz, Integer valorluz, Long timestampp) {
+	public SensorLuz(Integer idLuz, Integer valorluz, Long timestampl) {
 		super();
-		idLuz = idLuz;
-		valorluz = valorluz;
-		this.timestamp = timestamp;
+		this.idLuz = idLuz;
+		this.valorluz = valorluz;
+		this.timestampl = timestampl;
 	}
 	
 }

@@ -4,20 +4,44 @@ import java.util.Objects;
 
 public class SensorTemperaturaEntity {
 	//El sensor tiene temperatura y humedada, pero de momento solo usaré la temperatura
-	private Integer idth;
+	private Integer idtemp;
 	private Double temperatura;
 	private Long timestampt;
+	private Integer idP; // id de la placa
+	private Integer idG;	//id del group
 	
-	public SensorTemperaturaEntity(Integer idth, Double temperatura, Long timestampt) {
+	public SensorTemperaturaEntity(Integer idtemp, Double temperatura, Long timestampt, Integer idP, Integer idG)  {
 		super();
-		this.idth = idth;
+		this.idtemp = idtemp;
 		this.temperatura = temperatura;
 		this.timestampt = timestampt;
+		this.idP = idP;
+		this.idG = idG;
 	}
 
+	public Integer getIdP() {
+		return idP;
+	}
+
+	public void setIdP(Integer idP) {
+		this.idP = idP;
+	}
+
+	public Integer getIdG() {
+		return idG;
+	}
+
+	public void setIdG(Integer idG) {
+		this.idG = idG;
+	}
+
+	public SensorTemperaturaEntity() {
+		super();
+	}
+	
 	@Override
 	public int hashCode() {
-		return Objects.hash(idth);
+		return Objects.hash(idtemp);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -28,15 +52,15 @@ public class SensorTemperaturaEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		SensorTemperaturaEntity other = (SensorTemperaturaEntity) obj;
-		return Objects.equals(idth, other.idth);
+		return Objects.equals(idtemp, other.idtemp);
 	}
 
-	public Integer getIdth() {
-		return idth;
+	public Integer getIdtemp() {
+		return idtemp;
 	}
 
-	public void setIdth(Integer idth) {
-		this.idth = idth;
+	public void setIdtemp(Integer idtemp) {
+		this.idtemp = idtemp;
 	}
 
 	public Double getTemperatura() {

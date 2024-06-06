@@ -3,6 +3,10 @@ package es.us.lsi.dad;
 import java.util.Objects;
 
 public class SensorTemperatura {
+	@Override
+	public String toString() {
+		return "SensorTemperatura [idth=" + idth + ", temperatura=" + temperatura + ", timestamp=" + timestamp + "]";
+	}
 	//El sensor tiene temperatura y humedada, pero de momento solo usaré la temperatura
 	private Integer idth;
 	private Double temperatura;
