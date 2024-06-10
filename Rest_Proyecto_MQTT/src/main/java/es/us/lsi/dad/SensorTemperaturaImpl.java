@@ -4,11 +4,11 @@ import java.util.Objects;
 
 public class SensorTemperaturaImpl {
 	//El sensor tiene temperatura y humedada, pero de momento solo usaré la temperatura
-	private Integer idtemp;
-	private Double temperatura;
-	private Long timestampt;
-	private Integer idP; // id de la placa
-	private Integer idG;	//id del group
+	protected Integer idtemp;
+	protected Double temperatura;
+	protected Long timestampt;
+	protected Integer idP; // id de la placa
+	protected Integer idG;	//id del group
 	
 	//elem.getInteger("idPlaca"), elem.getInteger("idGroup")
 	public SensorTemperaturaImpl(Integer idtemp, Double temperatura, Long timestampt, Integer idP, Integer idG)  {

@@ -23,26 +23,37 @@ public class ServletLuz extends HttpServlet {
 		lh = new ArrayList<SensorLuz>();
 		SensorLuz medidasl = new SensorLuz(0, 1,(long) 1.1);
 		lh.add(medidasl);
-		//ids.add(0);
 		super.init(); 
-		//throw new ServletException();
+
 	}
 
-
-	
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String idl = req.getParameter("idl");
+		String valorluz = req.getParameter("valurluz");
+		
+		Integer idl2 = Integer.valueOf(idl);
+		Integer valorluz2 = Integer.valueOf(valorluz);
 
-		response.setContentType("text/html");
-		String message2 = Calendar.getInstance().getTime().toString();
-		PrintWriter out = response.getWriter();
-		//number++;
-		out.println("<body><h1>" + message2 + "</h1><h2>" + /*number +*/
-				 "</h2></body>");
+		SensorLuz luzz = new SensorLuz(idl2, valorluz2, (long) 1.1);
+
+		if(lh.contains(luzz)){
+			response(resp, "Aqui está su temperatura regsitrada" + luzz);
+		}else {
+			response(resp, "No existe esa temperatura");
+		}
 	}
 
 	public void destroy() {
 		// do nothing.
 	}
-
+	private void response(HttpServletResponse resp, String msg) throws IOException {
+		PrintWriter out = resp.getWriter();
+		out.println("<html>");
+		out.println("<body>");
+		out.println("<t1>" + msg + "</t1>");
+		out.println("</body>");
+		out.println("</html>");
+	}
+	
 }

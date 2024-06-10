@@ -26,7 +26,10 @@ public class RestServer extends AbstractVerticle {
 	
 	private Map<Integer, SensorTemperaturaEntity> temperaturas = new HashMap<Integer, SensorTemperaturaEntity>();
 	private Map<Integer, SensorLuzEntity> luces= new HashMap<Integer, SensorLuzEntity>();
+	private Map<Integer, ActLedEntity> leds= new HashMap<Integer, ActLedEntity>();
+	private Map<Integer, ActVenEntity> vens= new HashMap<Integer, ActVenEntity>();
 	private Gson gson;
+	
 	
 	public void start(Promise<Void> startFuture) {
 		// Instantiating a Gson serialize object using specific date format
@@ -43,7 +46,7 @@ public class RestServer extends AbstractVerticle {
 		});
 
 		// Defining URI paths for each method in RESTful interface, including body
-		// handling by /api/users* or /api/users/*
+		// SensorTemperatura by /api/users* or /api/users/*
 		router.route("/api/temperaturas*").handler(BodyHandler.create());
 		router.get("/api/temperaturas").handler(this::getAllWithParamsT);
 		router.get("/api/temperaturas/temperatura/allt").handler(this::getAllT);
@@ -51,7 +54,7 @@ public class RestServer extends AbstractVerticle {
 		router.post("/api/temperaturas").handler(this::addOneT);
 		router.delete("/api/temperaturas/:idtemp").handler(this::deleteOneT);
 		router.put("/api/temperaturas/:idtemp").handler(this::putOneT);
-		//TODO cambiar user id por luz/temperatura id, pero no se q id poner pq userid no esta en USerEntity
+		//SensorLuz
 		router.route("/api/luces*").handler(BodyHandler.create());
 		router.get("/api/luces").handler(this::getAllWithParamsL);
 		router.get("/api/luces/luz/alll").handler(this::getAllL);
@@ -59,6 +62,17 @@ public class RestServer extends AbstractVerticle {
 		router.post("/api/luces").handler(this::addOneL);
 		router.delete("/api/luces/:idl").handler(this::deleteOneL);
 		router.put("/api/luces/:idl").handler(this::putOneL);
+		//Actuador led
+		router.route("/api/led*").handler(BodyHandler.create());
+		router.get("/api/led").handler(this::getAllWithParamsLe);
+		router.get("/api/led/led/allle").handler(this::getAllLe);
+		router.get("/api/led/:idla").handler(this::getOneLe);
+		router.post("/api/led").handler(this::addOneLe);
+		
+		
+		
+		
+		
 	}
 	
 	@Override
@@ -233,6 +247,62 @@ public class RestServer extends AbstractVerticle {
 				.end(gson.toJson(element));
 	}
 	
+	//*****************//
+	//***Actudor led***//
+	//*****************//
+	
+	@SuppressWarnings("unused")
+	private void getAllLe(RoutingContext routingContext) {
+		routingContext.response().putHeader("content-type", "application/json; charset=utf-8").setStatusCode(200)
+				.end(gson.toJson(new ActLedEntityListWrapper(leds.values())));
+	}
+	
+	private void getAllWithParamsLe(RoutingContext routingContext) {
+		final String luz = routingContext.queryParams().contains("nivel_luz") ? 
+				routingContext.queryParam("nivel_luz").get(0) : null;
+		
+		final String timestample = routingContext.queryParams().contains("timestample") 
+				? routingContext.queryParam("timestample").get(0) : null;
+		
+		Double luzdouble = Double.parseDouble(luz);
+		Long timestamplelong = Long.parseLong(timestample) ;
+		
+
+		routingContext.response().putHeader("content-type", "application/json; charset=utf-8").setStatusCode(200)
+				.end(gson.toJson(new LuzEntityListWrapper(luces.values().stream().filter(elem -> {
+					boolean res = true;
+					res = res && (luzdouble != null ? elem.getNivel_luz().equals(luzdouble) : true);
+					res = res && (timestamplelong != null ? elem.getNivel_luz().equals(timestamplelong) : true);
+					return res;
+				}).collect(Collectors.toList()))));
+	}
+
+	
+	private void getOneLe(RoutingContext routingContext) {
+		int id = 0;
+		try {
+			id = Integer.parseInt(routingContext.request().getParam("idla"));
+
+			if (luces.containsKey(id)) {
+				ActLedEntity ds = leds.get(id);
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(200).end(ds != null ? gson.toJson(ds) : "");
+			} else {
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.setStatusCode(204).end();
+			}
+		} catch (Exception e) {
+			routingContext.response().putHeader("content-type", "application/json; charset=utf-8").setStatusCode(204)
+					.end();
+		}
+	}
+	
+	private void addOneLe(RoutingContext routingContext) {
+		final ActLedEntity led = gson.fromJson(routingContext.getBodyAsString(), ActLedEntity.class);
+		leds.put(led.getIdLA(), led);
+		routingContext.response().setStatusCode(201).putHeader("content-type", "application/json; charset=utf-8")
+				.end(gson.toJson(led));
+	}
 	/************************/
 	/*****FINALIZO REST******/
 	/************************/

@@ -3,23 +3,39 @@ package es.us.lsi.dad;
 import java.util.Objects;
 
 public class ActLedEntity {
-	int idled;
-	float nivel_luz;
-	public int getId() {
-		return idled;
+	Integer idla;
+	Double nivel_luz;
+	Long timestample;
+	Integer idP; // id de la placa
+	Integer idG;	//id del group
+	
+	public Integer getIdLA() {
+		return idla;
 	}
-	public void setId(int id) {
-		this.idled = id;
+	public void setIdLA(Integer idLA) {
+		this.idla = idLA;
 	}
-	public float getNivel_luz() {
+	public Double getNivel_luz() {
 		return nivel_luz;
 	}
-	public void setNivel_luz(float nivel_luz) {
+	public void setNivel_luz(Double nivel_luz) {
 		this.nivel_luz = nivel_luz;
+	}
+	public Integer getIdP() {
+		return idP;
+	}
+	public void setIdP(Integer idP) {
+		this.idP = idP;
+	}
+	public Integer getIdG() {
+		return idG;
+	}
+	public void setIdG(Integer idG) {
+		this.idG = idG;
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(idled);
+		return Objects.hash(idla);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -30,12 +46,25 @@ public class ActLedEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		ActLedEntity other = (ActLedEntity) obj;
-		return idled == other.idled;
-	}
-	public ActLedEntity(int id, float nivel_luz) {
-		super();
-		this.idled = id;
-		this.nivel_luz = nivel_luz;
+		return Objects.equals(idla, other.idla);
 	}
 
+	public Long getTimestample() {
+		return timestample;
+	}
+	public void setTimestample(Long timestample) {
+		this.timestample = timestample;
+	}
+	public ActLedEntity(Integer idla, Double nivel_luz, Long timestample, Integer idP, Integer idG) {
+		super();
+		this.idla = idla;
+		this.nivel_luz = nivel_luz;
+		this.timestample = timestample;
+		this.idP = idP;
+		this.idG = idG;
+	}
+	public ActLedEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 }

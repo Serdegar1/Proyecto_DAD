@@ -1,5 +1,7 @@
 package es.us.lsi.dad;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,12 +10,14 @@ public class ActLedEntityListWrapper {
 
 	public ActLedEntityListWrapper() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-
 	public ActLedEntityListWrapper(List<ActLedEntity> ledList) {
 		super();
 		this.ledList = ledList;
+	}
+	public ActLedEntityListWrapper(Collection<ActLedEntity> ledList) {
+		super();
+		this.ledList = new ArrayList<ActLedEntity>(ledList);
 	}
 
 	public List<ActLedEntity> getLedList() {
@@ -39,5 +43,9 @@ public class ActLedEntityListWrapper {
 			return false;
 		ActLedEntityListWrapper other = (ActLedEntityListWrapper) obj;
 		return Objects.equals(ledList, other.ledList);
+	}
+	@Override
+	public String toString() {
+		return "ActLedEntityListWrapper [ledList=" + ledList + "]";
 	}
 }

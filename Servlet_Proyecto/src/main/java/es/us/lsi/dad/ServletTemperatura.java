@@ -54,8 +54,10 @@ public class ServletTemperatura extends HttpServlet{
 			SensorTemperatura temp = new SensorTemperatura(Stemp.getIdth(), Stemp.getTemperatura(), Stemp.getTimestamp());
 			
 			th.add(temp);
+			response(resp, "Objeto añadido: ");
 			resp.getWriter().println(gson.toJson(Stemp));
 			resp.setStatus(201);
+
 		}else{
 			resp.setStatus(300);
 			response(resp, "Objeto del tipo incorrecto");

@@ -2,27 +2,27 @@ package es.us.lsi.dad;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.mqtt.MqttClient;
+import io.vertx.mqtt.MqttClientOptions;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Tuple;
+import io.vertx.core.buffer.Buffer;
+
 
 public class RestServer extends AbstractVerticle {
 
@@ -31,17 +31,40 @@ public class RestServer extends AbstractVerticle {
 	/*****INICIO REST********/
 	/************************/
 	
-	private Map<Integer, SensorTemperaturaImpl> temperaturas = new HashMap<Integer, SensorTemperaturaImpl>();
-	private Map<Integer, SensorLuzImpl> luces = new HashMap<Integer, SensorLuzImpl>();
+	
 	private Gson gson;
 	
 	MySQLPool mySQLclient; 
+	MqttClient mqttClient;
 	
 	public void start(Promise<Void> startFuture) {
+
+		///
+
+		
+		
+		// Establezco mqtt
+	
+		
+		
+		///
+		
+		mqttClient = MqttClient.create(vertx, new MqttClientOptions().setAutoKeepAlive(true));
+		
+		mqttClient.connect(1883, "localhost", s -> {
+
+			mqttClient.subscribe("twmp", MqttQoS.AT_LEAST_ONCE.value(), handler -> {
+				if (handler.succeeded()) {
+					System.out.println("Suscripción " + mqttClient.clientId());
+				}
+			});
+		
+		});
 		
 		MySQLConnectOptions connectOptions = new MySQLConnectOptions().setPort(3306).setHost("localhost")
 				.setDatabase("proyectodad").setUser("root").setPassword("root");
 		
+
 		PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
 		
 		mySQLclient = MySQLPool.pool(vertx, connectOptions, poolOptions);
@@ -64,30 +87,28 @@ public class RestServer extends AbstractVerticle {
 		router.get("/api/temperaturas").handler(this::getAllST);
 		router.get("/api/temperaturas/:idtemp").handler(this::getBySensorT);
 		router.get("/api/temperaturas/:idtemp").handler(this::getLastBySensorT);//no
-		router.get("/api/temperaturas").handler(this::addSensorT);//no
+		router.post("/api/temperaturas").handler(this::addSensorT);//no
 		
 		router.get("/api/luces").handler(this::getAllSL);
 		router.get("/api/luces/:idl").handler(this::getBySensorL);
 		router.get("/api/luces/:idl").handler(this::getLastBySensorL);//no
-		router.get("/api/temperaturas").handler(this::addSensorT);//no
+		//router.post("/api/luces").handler(this::addSensorL);//no
 
 		router.get("/api/actled").handler(this::getAllAL);
 		router.get("/api/actled/:idla").handler(this::getByActL);
 		router.get("/api/actled/:idla").handler(this::getLastByActL);
-		router.get("/api/actled").handler(this::addAL);
+		router.post("/api/actled").handler(this::addAL);
 
 		router.get("/api/actfan").handler(this::getAllAF);
 		router.get("/api/actfan/:idfa").handler(this::getByActF);
 		router.get("/api/actfan/:idfa").handler(this::getLastByActF);
-		router.get("/api/actfan").handler(this::addAF);
+		router.post("/api/actfan").handler(this::addAF);
 	
 	}
 	
 	@Override
 	public void stop(Promise<Void> stopPromise) throws Exception {
 		try {
-			temperaturas.clear();
-			luces.clear();
 			stopPromise.complete();
 		} catch (Exception e) {
 			stopPromise.fail(e);
@@ -195,42 +216,36 @@ public class RestServer extends AbstractVerticle {
 	
 	private void addSensorT(RoutingContext routingContext) {
 		final SensorTemperaturaImpl temp = gson.fromJson(routingContext.getBodyAsString(),SensorTemperaturaImpl.class);
+		temp.setTimestampt(Calendar.getInstance().getTimeInMillis());
 		mySQLclient.preparedQuery(
 						"INSERT INTO sensortemperatura (idtemp, temperatura, timestampt, idP, idG) VALUES (?, ?, ?, ?, ?)")
 				.execute((Tuple.of(temp.getIdtemp(), temp.getTemperatura(), temp.getTimestampt(), 
 						temp.getIdP(), temp.getIdG())), res -> {
 							if (res.succeeded()) {
-								routingContext.response().setStatusCode(201).putHeader("content-type",
-										"application/json; charset=utf-8").end("Sensor añadido correctamente");
+								if (mqttClient != null) {
+									if(temp.temperatura > 30.0) {
+										mqttClient.publish("twmp", Buffer.buffer("ON"), MqttQoS.AT_LEAST_ONCE, false, false);
+									}else{
+										mqttClient.publish("twmp", Buffer.buffer("OFF"), MqttQoS.AT_LEAST_ONCE, false, false);
+									}
+							}else {
+							    System.out.println("mqttClient is null. Cannot publish message.");
+
+							}
+								routingContext.response().setStatusCode(201)
+									.putHeader("content-type","application/json; charset=utf-8")
+									.end("Sensor añadido correctamente");
 							} else {
 								System.out.println("Error: " + res.cause().getLocalizedMessage());
-								routingContext.response().setStatusCode(500).end("Sensor al añadir el actuador: " + res.cause().getMessage());
+								routingContext.response().setStatusCode(500).end("Error al añadir el sensor " + res.cause().getMessage());
 							}
 						});
+		
+		
+		
 	}
-/*	private void addOneS(RoutingContext routingContext) {
-		final Sensor sensor = gson.fromJson(routingContext.getBodyAsString(), Sensor.class);
-		mySqlClient.getConnection(connection ->{
-			if(connection.succeeded()) {
-				connection.result().query("INSERT INTO bd_dad.sensor (idSensor, idGroup, idPlaca, tiempo, valor) VALUES (" + sensor.getId() +","+sensor.getIdGroup() +","+sensor.getIdPlaca()
-				+ ","+ sensor.getTiempo()+ ","+ sensor.getValor()+ ");").execute(res->{
-					if(res.succeeded()) {
-						routingContext.response().setStatusCode(201).putHeader("content-type", "application/json; charset=utf-8").setStatusCode(200)
-						.end(gson.toJson(sensor));
-					mqttClient.publish("topic_1", Buffer.buffer("Ejemplo"), MqttQoS.AT_LEAST_ONCE, false, false);
-					}else {
-						System.out.println("Error: "+ res.cause().getLocalizedMessage());
-					}
-					connection.result().close();
-				});
-			}else {
-				System.out.println(connection.cause().toString());
-			}
-		}
-		
-		
-		
-	}*/
+
+
 	
 	
 	/****************/

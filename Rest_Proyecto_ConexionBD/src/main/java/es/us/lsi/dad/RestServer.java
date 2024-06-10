@@ -31,8 +31,6 @@ public class RestServer extends AbstractVerticle {
 	/*****INICIO REST********/
 	/************************/
 	
-	private Map<Integer, SensorTemperaturaImpl> temperaturas = new HashMap<Integer, SensorTemperaturaImpl>();
-	private Map<Integer, SensorLuzImpl> luces = new HashMap<Integer, SensorLuzImpl>();
 	private Gson gson;
 	
 	MySQLPool mySQLclient; 
@@ -64,30 +62,27 @@ public class RestServer extends AbstractVerticle {
 		router.get("/api/temperaturas").handler(this::getAllST);
 		router.get("/api/temperaturas/:idtemp").handler(this::getBySensorT);
 		router.get("/api/temperaturas/:idtemp").handler(this::getLastBySensorT);//no
-		router.get("/api/temperaturas").handler(this::addSensorT);//no
+		router.post("/api/temperaturas").handler(this::addSensorT);//no
 		
 		router.get("/api/luces").handler(this::getAllSL);
 		router.get("/api/luces/:idl").handler(this::getBySensorL);
 		router.get("/api/luces/:idl").handler(this::getLastBySensorL);//no
-		router.get("/api/temperaturas").handler(this::addSensorT);//no
 
 		router.get("/api/actled").handler(this::getAllAL);
 		router.get("/api/actled/:idla").handler(this::getByActL);
 		router.get("/api/actled/:idla").handler(this::getLastByActL);
-		router.get("/api/actled").handler(this::addAL);
+		router.post("/api/actled").handler(this::addAL);
 
 		router.get("/api/actfan").handler(this::getAllAF);
 		router.get("/api/actfan/:idfa").handler(this::getByActF);
 		router.get("/api/actfan/:idfa").handler(this::getLastByActF);
-		router.get("/api/actfan").handler(this::addAF);
+		router.post("/api/actfan").handler(this::addAF);
 	
 	}
 	
 	@Override
 	public void stop(Promise<Void> stopPromise) throws Exception {
 		try {
-			temperaturas.clear();
-			luces.clear();
 			stopPromise.complete();
 		} catch (Exception e) {
 			stopPromise.fail(e);
