@@ -213,7 +213,7 @@ public class RestServer extends AbstractVerticle {
 			}
 		});
 	}
-	
+	//
 	private void addSensorT(RoutingContext routingContext) {
 		final SensorTemperaturaImpl temp = gson.fromJson(routingContext.getBodyAsString(),SensorTemperaturaImpl.class);
 		temp.setTimestampt(Calendar.getInstance().getTimeInMillis());
