@@ -4,7 +4,7 @@
 - Entregable 1 -----> Servlet_Proyecto 
 - Entregable 2 -----> Rest_Proyecto
 - Entregable 3 -----> Rest_Proyecto_ConexionBD
-- Entregable 4 -----> 
+- Entregable 4 -----> DADESPWS
 - Entregable 5 -----> Rest_Proyecto MQTT
 
 El entregable 4
